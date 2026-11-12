@@ -27,8 +27,8 @@ export type Week = {
   days: Day[];
 };
 
-/** Task kinds that work in the app today. Role play opens with the practice engine. */
-export const LIVE_KINDS: TaskKind[] = ["lesson", "quiz", "field_task", "reflection"];
+/** Task kinds that work in the app today. */
+export const LIVE_KINDS: TaskKind[] = ["lesson", "quiz", "roleplay", "field_task", "reflection"];
 export const isLive = (t: Pick<Task, "kind">) => LIVE_KINDS.includes(t.kind);
 
 export type DayState = "done" | "today" | "open" | "missed" | "upcoming" | "locked";
@@ -110,9 +110,15 @@ export async function loadTrack(profile: Profile): Promise<TrackView | null> {
   const overrides = new Set((unlockRows ?? []).map((u) => u.week_id as string));
 
   const unlockedWeeks = new Set<number>();
+  // A week opens when the previous week's assessment quiz is passed AND its end-of-week role play
+  // (if it has one) is done at the threshold, or by a staff override.
   weeks.forEach((w, i) => {
     const prev = weeks[i - 1];
-    const open = staff || w.number === 1 || overrides.has(w.id) || !prev?.assessment_quiz_id || passed.has(prev.assessment_quiz_id);
+    const prevLastDay = prev?.days[prev.days.length - 1];
+    const prevAssessmentRoleplay = prev?.assessment_quiz_id ? prevLastDay?.tasks.find((t) => t.kind === "roleplay") : undefined;
+    const prevPassed =
+      !prev?.assessment_quiz_id || (passed.has(prev.assessment_quiz_id) && (!prevAssessmentRoleplay || done.has(prevAssessmentRoleplay.id)));
+    const open = staff || w.number === 1 || overrides.has(w.id) || prevPassed;
     if (open) unlockedWeeks.add(w.number);
   });
 

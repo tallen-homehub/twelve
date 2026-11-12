@@ -2,6 +2,17 @@
 
 Newest first. One line of context, the decision, and why.
 
+- **2026-11-12 · Voice = OpenAI Realtime over WebRTC; text + scoring = Claude.** The week-1 latency spike was skipped for the
+  sprint; voice sits behind `/api/roleplay/[id]/token` and `VoiceRoleplay.tsx`, so swapping to ElevenLabs later touches only those.
+  The server mints a 2-minute client secret; the OpenAI key never reaches the phone.
+- **2026-11-12 · Scoring runs inside the request** (≤ 60 s route) instead of the jobs table, to show results immediately in the
+  demo. Recording analysis (longer) will use jobs.
+- **2026-11-12 · Hidden homeowner state.** Text mode asks the model to append `[[state trust=… end=… outcome=…]]`, which the
+  server strips and stores in `roleplay_sessions.state`; the rep never sees it.
+- **2026-11-12 · Task completion from role play.** Any scored run completes a practice task; the end-of-week role play needs
+  `weeks.roleplay_threshold` (default 70) and is now part of the week-unlock rule.
+- **2026-11-12 · Voice cap** 30 min per rep per Pacific day (staff uncapped); voice seconds are reported by the client and clamped.
+
 - **2026-11-12 · Draft curriculum lives in code.** `supabase/seed/content_draft.py` → `build_seed.py` → migration 0003. Deterministic
   ids make it safe to re-run. Weeks 1–2 of New Setter are full drafts; weeks 3–9 and the other two tracks are outlines.
 - **2026-11-12 · Quizzes graded in the database.** `get_quiz_questions` (no answers) and `submit_quiz` are security-definer

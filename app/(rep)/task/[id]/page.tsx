@@ -109,11 +109,36 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
     );
   }
 
+  if (task.kind === "roleplay" && task.ref_id) {
+    const { data: persona } = await supabase.from("personas").select("slug, name, setting, opening_line").eq("id", task.ref_id).single();
+    const best = (saved?.best_score as number | undefined) ?? null;
+    return (
+      <>
+        {back}
+        {header}
+        {task.instructions && <p className="mb-4 text-muted">{task.instructions}</p>}
+        {persona && (
+          <Card className="mb-6">
+            <p className="text-xs font-bold tracking-widest text-tan uppercase">{persona.setting === "door" ? "At the door" : "At the table"}</p>
+            <p className="mt-1 text-lg font-semibold">{persona.name}</p>
+            <p className="mt-1 text-sm text-muted italic">&ldquo;{persona.opening_line}&rdquo;</p>
+          </Card>
+        )}
+        {done && <p className="mb-4 rounded-xl bg-tan/15 px-4 py-3 font-semibold">Done{best !== null ? ` · best score ${best}` : ""}. Run it again any time.</p>}
+        {persona && (
+          <Link href={`/practice/${persona.slug}?task=${task.id}`} className="flex min-h-14 items-center justify-center rounded-xl bg-tan px-5 py-4 text-lg font-bold text-ink">
+            {done ? "Practice again" : "Start practice"}
+          </Link>
+        )}
+      </>
+    );
+  }
+
   return (
     <>
       {back}
       {header}
-      <ComingSoon day="Friday" what="AI role play: talk to a homeowner at the door or the table and get scored on Chase's stages." />
+      <ComingSoon day="later" what="This task type isn't available yet." />
     </>
   );
 }
