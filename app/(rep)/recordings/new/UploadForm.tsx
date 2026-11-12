@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { createRecording } from "../actions";
+import { uploadRecording } from "../upload-client";
 import { Button, Field } from "@/components/ui";
 
 const input = "w-full rounded-xl bg-charcoal px-4 py-4 text-lg outline-none ring-tan focus:ring-2";
@@ -15,7 +14,7 @@ export function UploadForm({ profileId, today, consentScript }: { profileId: str
   const [file, setFile] = useState<File | null>(null);
   const [setting, setSetting] = useState<"door" | "table">("table");
   const [consent, setConsent] = useState(false);
-  const [busy, setBusy] = useState<null | "uploading" | "saving">(null);
+  const [busy, setBusy] = useState<null | "uploading">(null);
   const [error, setError] = useState<string | null>(null);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
@@ -27,19 +26,8 @@ export function UploadForm({ profileId, today, consentScript }: { profileId: str
     const fd = new FormData(e.currentTarget);
 
     setBusy("uploading");
-    const ext = (file.name.split(".").pop() || "m4a").toLowerCase().replace(/[^a-z0-9]/g, "");
-    const path = `${profileId}/${crypto.randomUUID()}.${ext}`;
-    const { error: upErr } = await createClient().storage.from("recordings").upload(path, file, { contentType: file.type || undefined });
-    if (upErr) {
-      setBusy(null);
-      const tooBig = /size|exceed|too large|413/i.test(upErr.message);
-      return setError(tooBig ? "That file is bigger than storage allows right now. Export a shorter or smaller file (m4a works best) and try again." : `Upload failed: ${upErr.message}. Check your signal and try again.`);
-    }
-
-    setBusy("saving");
     try {
-      const id = await createRecording({
-        path,
+      const id = await uploadRecording(profileId, file, file.name.split(".").pop() || "m4a", {
         setting,
         recordedOn: String(fd.get("recorded_on") || ""),
         label: String(fd.get("label") || ""),
@@ -105,7 +93,7 @@ export function UploadForm({ profileId, today, consentScript }: { profileId: str
       </Field>
 
       <Button type="submit" disabled={busy !== null}>
-        {busy === "uploading" ? "Uploading… keep this screen open" : busy === "saving" ? "Saving…" : "Upload for coaching"}
+        {busy ? "Uploading… keep this screen open" : "Upload for coaching"}
       </Button>
       {error && <p className="text-red">{error}</p>}
     </form>

@@ -20,7 +20,12 @@ export default async function RecordingsPage() {
     <>
       <PageHeader eyebrow="Field recordings" title="recordings." />
       <div className="flex flex-col gap-4">
-        <ButtonLink href="/recordings/new">Upload a recording</ButtonLink>
+        <div className="grid grid-cols-2 gap-3">
+          <ButtonLink href="/recordings/record">● Record</ButtonLink>
+          <ButtonLink href="/recordings/new" variant="ghost">
+            Upload a file
+          </ButtonLink>
+        </div>
         {!recs?.length ? (
           <Card>
             <p className="text-muted">Record a real door or table conversation (with the homeowner&apos;s okay), upload it here, and Chase sends back timestamped coaching.</p>
