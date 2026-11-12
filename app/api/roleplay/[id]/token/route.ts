@@ -55,7 +55,13 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         model: REALTIME_MODEL,
         instructions: system,
         audio: {
-          input: { transcription: { model: "gpt-4o-mini-transcribe" }, turn_detection: { type: "server_vad" } },
+          input: { transcription: { model: "gpt-4o-mini-transcribe" }, turn_detection: {
+              // Reply sooner after the rep stops talking (default waits 500ms of silence), and let reps talk over the homeowner.
+              type: "server_vad",
+              silence_duration_ms: Number(process.env.VOICE_SILENCE_MS ?? 300),
+              prefix_padding_ms: 200,
+              interrupt_response: true,
+            } },
           output: { voice: persona.voice_id ?? VOICE_BY_PERSONA[persona.slug] ?? "marin" },
         },
       },
