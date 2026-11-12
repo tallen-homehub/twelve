@@ -2,7 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { SUPABASE_ANON_KEY, SUPABASE_URL, isSupabaseConfigured } from "@/lib/env";
 
-const PUBLIC_PATHS = ["/login", "/setup"];
+// /api/recordings/deepgram is called by Deepgram (no session); it checks its own signature.
+const PUBLIC_PATHS = ["/login", "/setup", "/api/recordings/deepgram"];
 
 // Refreshes the auth session on every request and sends signed-out users to /login.
 export async function updateSession(request: NextRequest) {

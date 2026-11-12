@@ -40,3 +40,11 @@ Newest first. One line of context, the decision, and why.
 
 ## Env var name fallbacks (2026-11-12)
 Vercel locks a variable's name after creation, and secret values can't be read back to re-add them. The keys were first saved as `twelve` (Anthropic) and `Open_Ai_Key` (OpenAI), so the code reads `ANTHROPIC_API_KEY ?? twelve` and `OPENAI_API_KEY ?? Open_Ai_Key`. When keys are next rotated, add them under the standard names and delete the fallbacks.
+
+## Recording pipeline (Day 4, 2026-11-12)
+- **Jobs without a queue service.** Each step runs with Next's `after()` (after the response is sent): the upload action starts Deepgram; Deepgram calls `/api/recordings/deepgram` (signed with an HMAC of the recording id); that route stores the transcript and runs triage + coaching in `after()`. A `jobs` row per recording records running/done/failed. Staff can re-run any failed recording from the queue. Swap for a real queue (Supabase Queues or Inngest) if volume needs it.
+- **Triage is one call.** Speaker labels, the consent check and the list of homeowner names to mask come from one small-model call (`recording_triage`) on the first 5 minutes, instead of three calls.
+- **Redaction** masks the names/places triage finds plus phone numbers and emails, before coaching. Audio is not altered.
+- **Upload is a plain Supabase Storage upload**, not resumable (tus) yet. Supabase's free plan caps uploads at 50 MB whatever the bucket says; a 45-minute m4a is usually under that. Pro raises the cap; add resumable uploads then.
+- **Not built yet:** Chase's voice memo on a note, waveform, splitting recordings over 60 minutes, release notifications, 90-day audio cleanup job.
+- **Reject** marks the recording failed with "Not released: <reason>" so it leaves the queue; the rep sees "Didn't process".
