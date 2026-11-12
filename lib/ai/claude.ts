@@ -15,6 +15,7 @@ export async function callClaude(opts: {
   messages: ClaudeMessage[];
   model?: string;
   maxTokens?: number;
+  /** Ignored: current Claude models reject `temperature`. Kept so callers and prompt_versions don't break. */
   temperature?: number;
 }): Promise<string> {
   const key = process.env.ANTHROPIC_API_KEY ?? process.env.twelve;
@@ -25,7 +26,6 @@ export async function callClaude(opts: {
     body: JSON.stringify({
       model: opts.model ?? MODELS.main,
       max_tokens: opts.maxTokens ?? 1024,
-      temperature: opts.temperature ?? 0.5,
       system: opts.system,
       messages: opts.messages,
     }),

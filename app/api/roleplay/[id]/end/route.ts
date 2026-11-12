@@ -20,8 +20,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!s || s.profile_id !== profile.id) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (s.status === "scored") return NextResponse.json({ ok: true });
 
-  const update: Record<string, unknown> = { status: "ended", ended_at: new Date().toISOString() };
-  if (s.mode === "voice") {
+  const update: Record<string, unknown> = { status: "ended" };
+  if (s.status === "live") update.ended_at = new Date().toISOString();
+  // Only a live call sets the transcript; a retry after failed scoring keeps what was saved.
+  if (s.mode === "voice" && s.status === "live") {
     const cap = TIME_CAP_S[(s.persona as unknown as { setting: "door" | "table" }).setting];
     update.turns = (body.turns ?? [])
       .filter((t) => (t.role === "rep" || t.role === "homeowner") && typeof t.text === "string" && t.text.trim())

@@ -108,8 +108,8 @@ export function VoiceRoleplay({ sessionId, personaName, setting }: { sessionId: 
     });
     if (!res.ok) {
       ending.current = false;
-      setStatus("error");
-      return setError((await res.json().catch(() => ({}))).error ?? "Scoring failed.");
+      // The call is saved; reload into the "Get my score" view so the rep can retry.
+      return router.refresh();
     }
     router.push(`/practice/session/${sessionId}/results`);
   }
