@@ -46,7 +46,9 @@ export function VoiceRoleplay({ sessionId, personaName, setting }: { sessionId: 
       audio.current = el;
       conn.ontrack = (e) => (el.srcObject = e.streams[0]);
 
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {
+        throw new Error("Microphone blocked. Allow mic access for this site, then try again.");
+      });
       mic.current = stream;
       conn.addTrack(stream.getTracks()[0]);
 
@@ -71,7 +73,12 @@ export function VoiceRoleplay({ sessionId, personaName, setting }: { sessionId: 
         body: offer.sdp,
         headers: { Authorization: `Bearer ${token.value}`, "Content-Type": "application/sdp" },
       });
-      if (!sdp.ok) throw new Error("Voice connection failed. Try text mode.");
+      if (!sdp.ok) {
+        const raw = await sdp.text();
+        let reason = raw.slice(0, 200);
+        try { reason = JSON.parse(raw).error?.message ?? reason; } catch {}
+        throw new Error(`Voice call failed (OpenAI ${sdp.status}): ${reason}`);
+      }
       await conn.setRemoteDescription({ type: "answer", sdp: await sdp.text() });
     } catch (e) {
       cleanup();

@@ -62,8 +62,11 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     }),
   });
   if (!res.ok) {
-    const detail = (await res.text()).slice(0, 300);
-    return NextResponse.json({ error: `Voice connection failed (${res.status}). Use text for now.`, detail }, { status: 502 });
+    const raw = await res.text();
+    let reason = raw.slice(0, 200);
+    try { reason = (JSON.parse(raw) as { error?: { message?: string } }).error?.message ?? reason; } catch {}
+    console.error("realtime client_secrets failed", res.status, raw.slice(0, 500));
+    return NextResponse.json({ error: `Voice setup failed (OpenAI ${res.status}): ${reason}` }, { status: 502 });
   }
   const data = (await res.json()) as { value?: string; client_secret?: { value?: string } };
   const value = data.value ?? data.client_secret?.value;
