@@ -1,6 +1,6 @@
 import { BottomNav } from "@/components/BottomNav";
 import { HelpFab } from "@/components/HelpFab";
-import { IconMe, IconPractice, IconRecordings, IconToday, IconTrack } from "@/components/icons";
+import { IconMe, IconPractice, IconRecordings, IconReps, IconToday, IconTrack } from "@/components/icons";
 import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
@@ -15,8 +15,10 @@ export default async function RepLayout({ children }: { children: React.ReactNod
       <HelpFab unread={unread} />
       <BottomNav
         items={[
+          // Team leaders train too; their team tab replaces Track (still reachable from Today).
+          ...(profile.role === "leader" ? [{ href: "/team", label: "My team", icon: <IconReps /> }] : []),
           { href: "/today", label: "Today", icon: <IconToday /> },
-          { href: "/track", label: "Track", icon: <IconTrack /> },
+          ...(profile.role === "leader" ? [] : [{ href: "/track", label: "Track", icon: <IconTrack /> }]),
           { href: "/practice", label: "Practice", icon: <IconPractice /> },
           { href: "/recordings", label: "Recordings", icon: <IconRecordings /> },
           { href: "/me", label: "Me", icon: <IconMe /> },

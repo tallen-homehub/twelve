@@ -11,6 +11,8 @@
   --color-muted: #c8c3ba;
   --color-muted-light: #55504a;
   --color-red: #d9534f;
+  --color-good: #8fb08a; /* at or above the team middle */
+  --color-warn: #d9a441; /* within 10–25% below */
 
   --font-display: "Archivo", "Arial Black", Arial, sans-serif;
   --font-sans: "Public Sans", Arial, Helvetica, sans-serif;

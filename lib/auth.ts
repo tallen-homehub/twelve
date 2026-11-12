@@ -46,7 +46,8 @@ export async function getProfile(): Promise<Profile | null> {
 export function homeFor(p: Profile): string {
   if (p.status === "uninvited" || p.status === "left" || p.status === "paused") return "/not-invited";
   if (p.status === "invited") return "/intake";
-  return isStaff(p.role) ? "/queue" : "/today";
+  if (isStaff(p.role)) return "/dashboard";
+  return p.role === "leader" ? "/team" : "/today";
 }
 
 /** Use at the top of a page: sends people who don't belong there to the right place. */
