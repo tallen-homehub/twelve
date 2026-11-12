@@ -49,7 +49,7 @@ export default async function IntakePage() {
     <main className="safe-top safe-bottom mx-auto flex min-h-dvh max-w-md flex-col gap-8 px-6 py-10">
       <Logo width={140} />
       <header>
-        <h1 className="font-display text-4xl font-black leading-none lowercase">welcome to twelve.</h1>
+        <h1 className="font-display text-4xl font-black leading-none uppercase">welcome to twelve.</h1>
         {/* TODO-VOICE: rewrite in Chase's voice once the voice profile exists */}
         <p className="mt-3 text-muted">Two minutes so we know who you are, not just what you sell.</p>
       </header>

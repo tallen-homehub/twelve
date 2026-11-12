@@ -49,7 +49,7 @@ export function TextRoleplay({ sessionId, personaName, initialTurns, ended: init
       <header className="mb-4 flex items-center justify-between gap-3">
         <div>
           <p className="text-xs font-bold tracking-widest text-tan uppercase">Role play · text</p>
-          <h1 className="font-display text-2xl font-black lowercase">{personaName}</h1>
+          <h1 className="font-display text-2xl font-black uppercase">{personaName}</h1>
         </div>
         <button onClick={finish} disabled={scoring || turns.filter((t) => t.role === "rep").length === 0} className="rounded-xl bg-charcoal px-4 py-3 font-bold disabled:opacity-40">
           End

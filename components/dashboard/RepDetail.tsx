@@ -37,6 +37,11 @@ export async function RepDetail({ repId, backHref, backLabel, staff, messageActi
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-sm text-muted">{r.leaderName ? `Team ${r.leaderName}` : "No team leader"}</span>
         <span className="flex-1" />
+        {staff && (
+          <Link href={`/reps/${r.id}/edit`} className="flex min-h-10 items-center rounded-sm bg-charcoal-2 px-4 text-sm font-semibold">
+            Edit
+          </Link>
+        )}
         {staff && messageAction && (
           <form action={messageAction}>
             <input type="hidden" name="rep" value={r.id} />

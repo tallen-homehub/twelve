@@ -134,7 +134,7 @@ export function VoiceRoleplay({ sessionId, personaName, setting }: { sessionId: 
     <div className="flex min-h-[calc(100dvh-10rem)] flex-col gap-6">
       <header>
         <p className="text-xs font-bold tracking-widest text-tan uppercase">Role play · voice</p>
-        <h1 className="font-display text-3xl font-black lowercase">{personaName}</h1>
+        <h1 className="font-display text-3xl font-black uppercase">{personaName}</h1>
       </header>
 
       <div className="flex flex-col items-center gap-4 py-6">

@@ -14,6 +14,13 @@
   --color-good: #8fb08a; /* at or above the team middle */
   --color-warn: #d9a441; /* within 10–25% below */
 
+  /* Editorial corners, like the TWELVE posters: everything rounded-sm..2xl is near-square. */
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
+  --radius-2xl: 4px;
+  --radius-3xl: 6px;
+
   --font-display: "Archivo", "Arial Black", Arial, sans-serif;
   --font-sans: "Public Sans", Arial, Helvetica, sans-serif;
 }
@@ -37,3 +44,20 @@ body {
 .safe-top {
   padding-top: max(env(safe-area-inset-top), 0.75rem);
 }
+
+/* ───────── TWELVE editorial type (matches the @sunrunxii posts) ───────── */
+/* Display type is Archivo, condensed. */
+.font-display { font-stretch: 75%; }
+/* Giant poster headline: THURSDAY, THE TEAM., REPS BEFORE REPS. */
+.font-cond { font-family: var(--font-display); font-stretch: 62%; font-weight: 900; text-transform: uppercase; line-height: 0.86; letter-spacing: -0.005em; }
+/* Wide-spaced small caps label: L E T ' S  G O */
+.eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.42em; text-transform: uppercase; color: var(--color-tan); }
+/* Tight label used on stat sheets */
+.label { font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-muted); }
+/* Thin grid lines laid over hero photos */
+.grid-lines { position: absolute; inset: 0; pointer-events: none;
+  background-image: linear-gradient(to right, transparent calc(33.333% - 0.5px), rgb(245 244 240 / 0.22) calc(33.333% - 0.5px), rgb(245 244 240 / 0.22) calc(33.333% + 0.5px), transparent calc(33.333% + 0.5px), transparent calc(66.666% - 0.5px), rgb(245 244 240 / 0.22) calc(66.666% - 0.5px), rgb(245 244 240 / 0.22) calc(66.666% + 0.5px), transparent calc(66.666% + 0.5px)); }
+/* Soft glow on progress rings (Whoop-style) */
+.glow-tan { filter: drop-shadow(0 0 6px rgb(205 191 166 / 0.55)); }
+.glow-good { filter: drop-shadow(0 0 6px rgb(143 176 138 / 0.6)); }
+.glow-warn { filter: drop-shadow(0 0 6px rgb(217 164 65 / 0.55)); }

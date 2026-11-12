@@ -25,7 +25,7 @@ export default async function InboxThreadPage({ params }: { params: Promise<{ id
         <p className="text-xs font-bold tracking-widest text-tan uppercase">
           {rep?.rep_type?.replace("_", "-") ?? "rep"} · {t.status === "escalated" ? "needs leadership" : "help bot answering"}
         </p>
-        <h1 className="font-display text-3xl font-black lowercase">{rep?.full_name ?? "rep"}</h1>
+        <h1 className="font-display text-3xl font-black uppercase">{rep?.full_name ?? "rep"}</h1>
         {t.status === "escalated" && t.escalation_reason && <p className="text-sm text-muted">Why: {t.escalation_reason}</p>}
       </header>
       <StaffChat threadId={id} initial={messages} status={t.status as "ai" | "escalated"} />

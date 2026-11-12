@@ -4,15 +4,15 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "
 
 /** Big, thumb-friendly button. Primary = tan on ink. */
 export function Button({ variant = "primary", className = "", ...props }: ButtonProps) {
-  const base = "min-h-12 w-full rounded-xl px-5 py-4 text-lg font-bold transition active:scale-[0.98] disabled:opacity-50";
-  const look = variant === "primary" ? "bg-tan text-ink" : "bg-charcoal text-bone";
+  const base = "min-h-12 w-full rounded-sm px-5 py-4 font-display text-[15px] font-extrabold tracking-[0.28em] uppercase transition active:scale-[0.98] disabled:opacity-50";
+  const look = variant === "primary" ? "bg-bone text-ink" : "border border-muted-light bg-ink text-bone";
   return <button {...props} className={`${base} ${look} ${className}`} />;
 }
 
 export function ButtonLink({ href, children, variant = "primary" }: { href: string; children: React.ReactNode; variant?: "primary" | "ghost" }) {
-  const look = variant === "primary" ? "bg-tan text-ink" : "bg-charcoal text-bone";
+  const look = variant === "primary" ? "bg-bone text-ink" : "border border-muted-light bg-ink text-bone";
   return (
-    <Link href={href} className={`flex min-h-12 w-full items-center justify-center rounded-xl px-5 py-4 text-lg font-bold ${look}`}>
+    <Link href={href} className={`flex min-h-12 w-full items-center justify-center rounded-sm px-5 py-4 text-center font-display text-[15px] font-extrabold tracking-[0.28em] uppercase ${look}`}>
       {children}
     </Link>
   );
@@ -33,9 +33,9 @@ export function Card({ children, className = "" }: { children: React.ReactNode; 
 
 export function PageHeader({ eyebrow, title }: { eyebrow?: string; title: string }) {
   return (
-    <header className="flex flex-col gap-1 pb-6">
-      {eyebrow && <p className="text-xs font-bold tracking-widest text-tan uppercase">{eyebrow}</p>}
-      <h1 className="font-display text-4xl font-black leading-none lowercase">{title}</h1>
+    <header className="flex flex-col gap-2 pb-6">
+      {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+      <h1 className="font-cond text-6xl">{title}</h1>
     </header>
   );
 }
@@ -44,7 +44,7 @@ export function PageHeader({ eyebrow, title }: { eyebrow?: string; title: string
 export function ComingSoon({ day, what }: { day: string; what: string }) {
   return (
     <Card>
-      <p className="text-xs font-bold tracking-widest text-tan uppercase">Coming {day}</p>
+      <p className="eyebrow">Coming {day}</p>
       <p className="mt-2 text-muted">{what}</p>
     </Card>
   );

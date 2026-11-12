@@ -33,7 +33,7 @@ export default async function TrackPage() {
                   Week {w.number}
                   {locked ? " · locked" : ""}
                 </p>
-                <h2 className="font-display text-2xl font-black lowercase">{w.title}</h2>
+                <h2 className="font-display text-2xl font-black uppercase">{w.title}</h2>
                 {w.goal && <p className="text-sm text-muted">{w.goal}</p>}
                 {locked && w.number > 1 && <p className="mt-1 text-sm text-muted">Unlocks when you pass the Week {w.number - 1} assessment.</p>}
               </div>

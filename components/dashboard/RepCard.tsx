@@ -11,7 +11,7 @@ export function RepCard({ r, today, href }: { r: RepRow; today: string; href: st
     <article className="flex flex-col gap-3 rounded-2xl bg-charcoal p-4">
       <header className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <Link href={href} className="font-display text-xl font-black lowercase hover:underline">
+          <Link href={href} className="font-display text-xl font-black uppercase hover:underline">
             {r.name}
           </Link>
           <p className="text-xs text-muted">

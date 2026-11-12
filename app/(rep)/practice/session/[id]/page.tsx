@@ -25,7 +25,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
     return (
       <div className="flex flex-col gap-4">
         <p className="text-xs font-bold tracking-widest text-tan uppercase">Role play · voice</p>
-        <h1 className="font-display text-3xl font-black lowercase">{persona.name}</h1>
+        <h1 className="font-display text-3xl font-black uppercase">{persona.name}</h1>
         <p className="text-muted">Your call is saved. It just hasn&apos;t been scored yet.</p>
         <RescoreButton sessionId={s.id} />
       </div>

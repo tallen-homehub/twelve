@@ -57,6 +57,8 @@ export type Dashboard = {
   reps: RepRow[];
   teams: TeamSummary[];
   totals: { thisWeek: Numbers; lastWeek: Numbers };
+  /** Team totals per day, last week Monday through today (for trend lines). */
+  byDay: { date: string; n: Numbers }[];
   medians: Medians;
   pulse: { coached7d: number; focusSet: number; loggedToday: number; activeLast3d: number; total: number };
 };
@@ -309,10 +311,16 @@ export async function loadDashboard(opts: { leaderId?: string | null } = {}): Pr
     })
     .sort((a, b) => b.thisWeek.appts + b.thisWeek.closes - (a.thisWeek.appts + a.thisWeek.closes));
 
+  const dayTotals = new Map<string, Numbers>();
+  for (const l of (logs.data ?? []) as ({ log_date: string } & Numbers)[]) dayTotals.set(l.log_date, add(dayTotals.get(l.log_date) ?? ZERO, l));
+  const byDay: { date: string; n: Numbers }[] = [];
+  for (let d = lastWeekStart; d <= today; d = addDays(d, 1)) byDay.push({ date: d, n: dayTotals.get(d) ?? ZERO });
+
   return {
     today,
     weekStart,
     lastWeekStart,
+    byDay,
     reps: rows,
     teams,
     totals: { thisWeek: rows.reduce((a, r) => add(a, r.thisWeek), ZERO), lastWeek: rows.reduce((a, r) => add(a, r.lastWeek), ZERO) },

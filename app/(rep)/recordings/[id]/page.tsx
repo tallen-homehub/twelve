@@ -37,7 +37,7 @@ export default async function RecordingPage({ params }: { params: Promise<{ id: 
           {r.setting === "door" ? "At the door" : "At the table"}
           {r.duration_s ? ` · ${mmss(r.duration_s)}` : ""}
         </p>
-        <h1 className="font-display text-3xl font-black lowercase">{r.label || "recording"}</h1>
+        <h1 className="font-display text-3xl font-black uppercase">{r.label || "recording"}</h1>
       </header>
     </>
   );

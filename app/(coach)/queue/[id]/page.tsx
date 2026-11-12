@@ -45,7 +45,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
         <p className="text-xs font-bold tracking-widest text-tan uppercase">
           {r.setting} {r.duration_s ? `· ${mmss(r.duration_s)}` : ""} · {STAFF_STATUS[r.status]}
         </p>
-        <h1 className="font-display text-3xl font-black lowercase">{rep}</h1>
+        <h1 className="font-display text-3xl font-black uppercase">{rep}</h1>
         {r.label && <p className="text-muted">{r.label}</p>}
       </header>
     </>

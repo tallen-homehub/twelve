@@ -4,6 +4,8 @@ import { loadDashboard } from "@/lib/dashboard";
 import { createClient } from "@/lib/supabase/server";
 import { NeedsList, Stat } from "@/components/dashboard/bits";
 import { RepCard } from "@/components/dashboard/RepCard";
+import { PhotoHero, PHOTOS } from "@/components/editorial";
+import { Logo } from "@/components/Logo";
 
 export const metadata = { title: "My team" };
 
@@ -13,12 +15,12 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
   const { leader } = await searchParams;
   const leaderId = staff ? (leader ?? null) : me.id;
   const d = await loadDashboard({ leaderId });
-  let title = `your team, ${firstName(me).toLowerCase()}.`;
+  let title = `Your team, ${firstName(me)}.`;
   if (staff && leaderId) {
     const supabase = await createClient();
     const { data: l } = await supabase.from("profiles").select("full_name, preferred_name").eq("id", leaderId).maybeSingle();
-    title = `team ${(l ? firstName(l) : "leader").toLowerCase()}.`;
-  } else if (staff) title = "all reps.";
+    title = `Team ${l ? firstName(l) : "leader"}.`;
+  } else if (staff) title = "All reps.";
   const href = (id: string) => (staff ? `/reps/${id}` : `/team/rep/${id}`);
   const missing = d.reps.filter((r) => !r.loggedToday);
   const t = d.totals.thisWeek;
@@ -26,15 +28,26 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
 
   return (
     <div className="flex flex-col gap-8 pb-6">
-      {staff && (
-        <Link href="/dashboard" className="-mb-4 py-2 text-sm text-muted">
-          ← Dashboard
-        </Link>
-      )}
-      <header>
-        <p className="text-xs font-bold tracking-widest text-tan uppercase">{d.reps.length} reps · this week</p>
-        <h1 className="font-display text-4xl font-black leading-none lowercase">{title}</h1>
-      </header>
+      <PhotoHero src={PHOTOS.crew} className="h-[300px]" position="50% 35%" priority>
+        <div className="safe-top flex items-start justify-between pt-4">
+          {staff ? (
+            <Link href="/dashboard" className="flex min-h-11 items-center text-sm text-bone">
+              ← Dashboard
+            </Link>
+          ) : (
+            <Logo width={104} />
+          )}
+          <p className="text-right text-[10px] leading-snug font-semibold">
+            {d.reps.length} REPS
+            <br />
+            THIS WEEK
+          </p>
+        </div>
+        <div className="absolute inset-x-5 bottom-5">
+          <p className="eyebrow">Team view</p>
+          <h1 className="mt-1 font-cond text-[72px]">{title}</h1>
+        </div>
+      </PhotoHero>
 
       <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat label="Doors" value={t.doors} last={l.doors} />
@@ -61,12 +74,12 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="font-display text-2xl font-black lowercase">needs you today</h2>
+        <h2 className="font-cond text-[40px]">Needs you today</h2>
         <NeedsList reps={d.reps} hrefFor={href} limit={20} />
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="font-display text-2xl font-black lowercase">your reps</h2>
+        <h2 className="font-cond text-[40px]">Your reps</h2>
         {d.reps.length ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {d.reps.map((r) => (

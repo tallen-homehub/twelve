@@ -6,7 +6,7 @@ export default function SetupPage() {
   return (
     <main className="safe-top mx-auto flex min-h-dvh max-w-md flex-col gap-8 px-6 py-10">
       <Logo width={160} />
-      <h1 className="font-display text-4xl font-black lowercase">almost there.</h1>
+      <h1 className="font-display text-4xl font-black uppercase">almost there.</h1>
       <Card>
         <p>The app is deployed but not connected to the database yet.</p>
         <p className="mt-3 text-muted">

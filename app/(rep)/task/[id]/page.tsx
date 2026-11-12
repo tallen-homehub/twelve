@@ -56,7 +56,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
         <article className="lesson flex flex-col gap-4 pb-8 leading-relaxed">
           <Markdown
             components={{
-              h2: ({ children }) => <h2 className="mt-4 font-display text-2xl font-black lowercase">{children}</h2>,
+              h2: ({ children }) => <h2 className="mt-4 font-display text-2xl font-black uppercase">{children}</h2>,
               ul: ({ children }) => <ul className="ml-5 list-disc space-y-2">{children}</ul>,
               ol: ({ children }) => <ol className="ml-5 list-decimal space-y-2">{children}</ol>,
               strong: ({ children }) => <strong className="text-tan">{children}</strong>,
