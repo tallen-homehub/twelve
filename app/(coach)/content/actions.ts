@@ -6,8 +6,20 @@ import { rebuildAppBrain } from "@/lib/brain";
 import { syncDrive } from "@/lib/brain/drive";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+// Actions return { ok, message } instead of throwing: production hides thrown messages ("An error occurred in the Server Components render").
+export type ActionResult = { ok: boolean; message: string };
+const fail = (e: unknown): ActionResult => ({ ok: false, message: e instanceof Error ? e.message : "That didn't work." });
+
 /** Re-reads the app guide, lessons, skills and homeowners into the help bot's brain. */
-export async function rebuildBrain() {
+export async function rebuildBrain(): Promise<ActionResult> {
+  try {
+    return { ok: true, message: await rebuildBrainInner() };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+async function rebuildBrainInner() {
   const me = await requireProfile({ roles: ["coach", "admin"] });
   const result = await rebuildAppBrain();
   await createAdminClient().from("audit_log").insert({ actor: me.id, action: "brain.rebuild", detail: result });
@@ -16,7 +28,15 @@ export async function rebuildBrain() {
 }
 
 /** Pulls new and changed files from the Google Drive "Twelve Brain" folder. */
-export async function syncDriveNow() {
+export async function syncDriveNow(): Promise<ActionResult> {
+  try {
+    return { ok: true, message: await syncDriveInner() };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+async function syncDriveInner() {
   const me = await requireProfile({ roles: ["coach", "admin"] });
   const r = await syncDrive();
   await createAdminClient().from("audit_log").insert({ actor: me.id, action: "brain.drive_sync", detail: r });
@@ -24,6 +44,6 @@ export async function syncDriveNow() {
   const parts = [`${r.files} files in the folder`, `${r.updated} updated`];
   if (r.removed) parts.push(`${r.removed} removed`);
   if (r.skipped) parts.push(`${r.skipped} without readable text`);
-  if (r.errors.length) parts.push(`${r.errors.length} failed`);
+  if (r.errors.length) parts.push(`${r.errors.length} failed (${r.errors.map((x) => `${x.title}: ${x.error}`).join("; ")})`);
   return parts.join(", ") + ".";
 }

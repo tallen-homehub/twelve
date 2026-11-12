@@ -31,13 +31,43 @@ export function folderIdFrom(value: string) {
   return value.match(/folders\/([\w-]+)/)?.[1] ?? value.match(/[?&]id=([\w-]+)/)?.[1] ?? value.trim();
 }
 
-async function accessToken(): Promise<string> {
-  let key: { client_email: string; private_key: string };
+/**
+ * Reads the service-account key however it was pasted into Vercel: the raw JSON file, JSON wrapped in quotes,
+ * JSON whose \n escapes became real line breaks, or base64 of the file. Only the email and private key are needed.
+ */
+export function readServiceAccount(raw: string | undefined): { client_email: string; private_key: string } {
+  let text = (raw ?? "").trim();
+  if (!text) throw new Error("GOOGLE_SERVICE_ACCOUNT_JSON is empty in Vercel.");
+  if (!text.includes("{") && /^[A-Za-z0-9+/=\s]+$/.test(text)) text = Buffer.from(text, "base64").toString("utf8");
+  if ((text.startsWith("'") && text.endsWith("'")) || (text.startsWith('"') && text.endsWith('"') && !text.startsWith('"{'))) text = text.slice(1, -1);
   try {
-    key = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON ?? "");
-  } catch {
-    throw new Error("GOOGLE_SERVICE_ACCOUNT_JSON isn't valid JSON. Paste the whole key file.");
+    const j = JSON.parse(text);
+    const obj = typeof j === "string" ? JSON.parse(j) : j;
+    if (obj?.client_email && obj?.private_key) return { client_email: obj.client_email, private_key: cleanPem(String(obj.private_key)) };
+  } catch {}
+  const email = text.match(/"client_email"\s*:\s*"([^"]+)"/)?.[1];
+  const pem = text.match(/-----BEGIN PRIVATE KEY-----[\s\S]+?-----END PRIVATE KEY-----/)?.[0];
+  if (!email || !pem) {
+    throw new Error(
+      `Couldn't read the Google key in Vercel (${!email ? "no client_email" : "no private key"} found, ${text.length} characters). Open the downloaded .json file, select everything, and paste it as the value of GOOGLE_SERVICE_ACCOUNT_JSON.`,
+    );
   }
+  return { client_email: email, private_key: cleanPem(pem) };
+}
+
+/** Rebuilds a PEM private key with standard line breaks, whatever happened to its whitespace. */
+function cleanPem(pem: string) {
+  const body = pem
+    .replace(/\\n/g, "\n")
+    .replace("-----BEGIN PRIVATE KEY-----", "")
+    .replace("-----END PRIVATE KEY-----", "")
+    .replace(/[^A-Za-z0-9+/=]/g, "");
+  const lines = body.match(/.{1,64}/g)?.join("\n") ?? body;
+  return `-----BEGIN PRIVATE KEY-----\n${lines}\n-----END PRIVATE KEY-----\n`;
+}
+
+async function accessToken(): Promise<string> {
+  const key = readServiceAccount(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
   const now = Math.floor(Date.now() / 1000);
   const b64 = (o: object) => Buffer.from(JSON.stringify(o)).toString("base64url");
   const unsigned = `${b64({ alg: "RS256", typ: "JWT" })}.${b64({
@@ -47,7 +77,7 @@ async function accessToken(): Promise<string> {
     iat: now,
     exp: now + 3600,
   })}`;
-  const sig = createSign("RSA-SHA256").update(unsigned).sign(key.private_key.replace(/\\n/g, "\n")).toString("base64url");
+  const sig = createSign("RSA-SHA256").update(unsigned).sign(key.private_key).toString("base64url");
   const res = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },

@@ -6,7 +6,7 @@ import { rebuildBrain, syncDriveNow } from "./actions";
 
 export function BrainButton({ kind }: { kind: "app" | "drive" }) {
   const [pending, start] = useTransition();
-  const [msg, setMsg] = useState<string | null>(null);
+  const [msg, setMsg] = useState<{ ok: boolean; message: string } | null>(null);
   const run = kind === "app" ? rebuildBrain : syncDriveNow;
   return (
     <div className="flex flex-col gap-2">
@@ -18,15 +18,15 @@ export function BrainButton({ kind }: { kind: "app" | "drive" }) {
             setMsg(null);
             try {
               setMsg(await run());
-            } catch (e) {
-              setMsg(e instanceof Error ? e.message : "That didn't work.");
+            } catch {
+              setMsg({ ok: false, message: "Lost connection. Try again." });
             }
           })
         }
       >
         {pending ? "Working… (up to a minute)" : kind === "app" ? "Rebuild from the app" : "Sync Google Drive now"}
       </Button>
-      {msg && <p className="text-sm text-muted">{msg}</p>}
+      {msg && <p className={`text-sm ${msg.ok ? "text-muted" : "text-red"}`}>{msg.message}</p>}
     </div>
   );
 }
