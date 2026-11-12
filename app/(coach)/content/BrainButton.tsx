@@ -2,29 +2,29 @@
 
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui";
-import { rebuildBrain } from "./actions";
+import { rebuildBrain, syncDriveNow } from "./actions";
 
-export function BrainButton() {
+export function BrainButton({ kind }: { kind: "app" | "drive" }) {
   const [pending, start] = useTransition();
   const [msg, setMsg] = useState<string | null>(null);
+  const run = kind === "app" ? rebuildBrain : syncDriveNow;
   return (
     <div className="flex flex-col gap-2">
       <Button
-        variant="ghost"
+        variant={kind === "drive" ? "primary" : "ghost"}
         disabled={pending}
         onClick={() =>
           start(async () => {
             setMsg(null);
             try {
-              const r = await rebuildBrain();
-              setMsg(`Done: ${r.docs} sources, ${r.chunks} pieces.`);
+              setMsg(await run());
             } catch (e) {
-              setMsg(e instanceof Error ? e.message : "Rebuild failed.");
+              setMsg(e instanceof Error ? e.message : "That didn't work.");
             }
           })
         }
       >
-        {pending ? "Rebuilding… (up to a minute)" : "Rebuild the brain"}
+        {pending ? "Working… (up to a minute)" : kind === "app" ? "Rebuild from the app" : "Sync Google Drive now"}
       </Button>
       {msg && <p className="text-sm text-muted">{msg}</p>}
     </div>
