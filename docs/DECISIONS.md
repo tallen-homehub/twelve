@@ -37,3 +37,6 @@ Newest first. One line of context, the decision, and why.
 - **2026-11-11 · Reflections hidden from leaders.** A restrictive policy keeps reflection tasks visible only to the rep and staff.
 - **2026-11-11 · Tailwind v4.** Brand tokens live in `app/globals.css` under `@theme`, not a tailwind config file.
 - **2026-11-11 · Fonts by stylesheet link,** not `next/font`, so builds don't depend on fetching fonts at build time.
+
+## Env var name fallbacks (2026-11-12)
+Vercel locks a variable's name after creation, and secret values can't be read back to re-add them. The keys were first saved as `twelve` (Anthropic) and `Open_Ai_Key` (OpenAI), so the code reads `ANTHROPIC_API_KEY ?? twelve` and `OPENAI_API_KEY ?? Open_Ai_Key`. When keys are next rotated, add them under the standard names and delete the fallbacks.

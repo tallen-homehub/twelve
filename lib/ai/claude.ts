@@ -17,7 +17,7 @@ export async function callClaude(opts: {
   maxTokens?: number;
   temperature?: number;
 }): Promise<string> {
-  const key = process.env.ANTHROPIC_API_KEY;
+  const key = process.env.ANTHROPIC_API_KEY ?? process.env.twelve;
   if (!key) throw new Error("ANTHROPIC_API_KEY is not set in Vercel.");
   const res = await fetch(API, {
     method: "POST",

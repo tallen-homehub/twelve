@@ -17,7 +17,7 @@ const VOICE_BY_PERSONA: Record<string, string> = {
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const profile = await requireProfile();
-  const key = process.env.OPENAI_API_KEY;
+  const key = process.env.OPENAI_API_KEY ?? process.env.Open_Ai_Key;
   if (!key) return NextResponse.json({ error: "Voice isn't set up yet (OPENAI_API_KEY missing). Use text for now." }, { status: 503 });
 
   const supabase = await createClient();
