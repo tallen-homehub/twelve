@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+/* RUN XII / Twelve brand tokens. Use these; no stray hex values in components. */
+@theme {
+  --color-ink: #0e0e0e;
+  --color-bone: #f5f4f0;
+  --color-tan: #cdbfa6;
+  --color-charcoal: #1f1c19;
+  --color-charcoal-2: #2a2622;
+  --color-brown: #6b5a45;
+  --color-muted: #c8c3ba;
+  --color-muted-light: #55504a;
+  --color-red: #d9534f;
+
+  --font-display: "Archivo", "Arial Black", Arial, sans-serif;
+  --font-sans: "Public Sans", Arial, Helvetica, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: var(--color-ink);
+  color: var(--color-bone);
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Respect the iPhone home indicator and notch when installed as an app */
+.safe-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 0.75rem);
+}
+.safe-top {
+  padding-top: max(env(safe-area-inset-top), 0.75rem);
+}
