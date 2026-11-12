@@ -48,3 +48,9 @@ Vercel locks a variable's name after creation, and secret values can't be read b
 - **Upload is a plain Supabase Storage upload**, not resumable (tus) yet. Supabase's free plan caps uploads at 50 MB whatever the bucket says; a 45-minute m4a is usually under that. Pro raises the cap; add resumable uploads then.
 - **Not built yet:** Chase's voice memo on a note, waveform, splitting recordings over 60 minutes, release notifications, 90-day audio cleanup job.
 - **Reject** marks the recording failed with "Not released: <reason>" so it leaves the queue; the rep sees "Didn't process".
+
+## Help chat and the brain (2026-11-12)
+- **One conversation per rep.** The help bot (Haiku, prompt `help_agent`) answers while the thread is `ai`. It escalates on pay/HR/scheduling, safety, broken app, upset reps, anything the brain doesn't cover, or when the rep taps "Talk to a person". Escalated threads go quiet for the bot and show in leadership's Inbox (coach/admin). Leadership replying to a bot thread takes it over; "hand back" returns it to the bot. Leaders (team leads) don't see help chats.
+- **Alerts:** in-app badges only for now (Inbox tab count, red dot on the rep's ? button). Text/push alerts later.
+- **Live updates by polling** every 4 seconds while a chat is open, instead of Supabase Realtime. Simple and fine at this size.
+- **Brain:** chunks in `content_chunks` with OpenAI `text-embedding-3-small` at 1024 dimensions, searched with `match_chunks`. Sources today: the app guide (`lib/brain/app-guide.ts`), published lessons, skills, personas. It builds itself on the first question; Content → "Rebuild the brain" refreshes it. Google Drive "Twelve Brain" folder sync is next (chosen over Notion: no new tool for Chase's team).

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export type NavItem = { href: string; label: string; icon: React.ReactNode };
+export type NavItem = { href: string; label: string; icon: React.ReactNode; badge?: number };
 
 /** Fixed bottom tab bar, sized for thumbs. */
 export function BottomNav({ items }: { items: NavItem[] }) {
@@ -19,7 +19,12 @@ export function BottomNav({ items }: { items: NavItem[] }) {
                 href={it.href}
                 className={`flex min-h-12 flex-col items-center gap-1 rounded-lg py-1 text-xs font-semibold ${active ? "text-tan" : "text-muted"}`}
               >
-                {it.icon}
+                <span className="relative">
+                  {it.icon}
+                  {it.badge ? (
+                    <span className="absolute -top-1.5 -right-2.5 min-w-5 rounded-full bg-red px-1 text-center text-[11px] leading-5 font-bold text-ink">{it.badge > 9 ? "9+" : it.badge}</span>
+                  ) : null}
+                </span>
                 {it.label}
               </Link>
             </li>
