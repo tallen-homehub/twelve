@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { videoEmbed } from "@/lib/video";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 import { requireProfile } from "@/lib/auth";
@@ -38,7 +39,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
   if (task.kind === "lesson" && task.ref_id) {
     const { data: lesson } = await supabase
       .from("lessons")
-      .select("title, summary, body_md, mux_playback_id, is_draft_content")
+      .select("title, summary, body_md, mux_playback_id, video_url, is_draft_content")
       .eq("id", task.ref_id)
       .single();
     if (!lesson) notFound();
@@ -49,9 +50,12 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
         {lesson.is_draft_content && (
           <p className="mb-4 inline-block rounded-full bg-charcoal px-3 py-1 text-xs font-bold text-tan">DRAFT · Chase&apos;s version coming</p>
         )}
-        <div className="mb-6 flex aspect-video items-center justify-center rounded-2xl bg-charcoal text-center text-sm text-muted">
-          {lesson.mux_playback_id ? "Video" : "Video coming from the studio day"}
-        </div>
+        {(() => {
+          const v = videoEmbed(lesson.video_url);
+          if (v?.kind === "file") return <video src={v.src} controls playsInline preload="metadata" className="mb-6 aspect-video w-full rounded-sm bg-ink" />;
+          if (v) return <iframe src={v.src} title={lesson.title} allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowFullScreen className="mb-6 aspect-video w-full rounded-sm bg-ink" />;
+          return <div className="mb-6 flex aspect-video items-center justify-center rounded-sm bg-charcoal text-center text-sm text-muted">Video coming from the studio day</div>;
+        })()}
         {lesson.summary && <p className="mb-6 text-lg text-muted">{lesson.summary}</p>}
         <article className="lesson flex flex-col gap-4 pb-8 leading-relaxed">
           <Markdown

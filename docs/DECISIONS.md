@@ -69,3 +69,10 @@ Vercel locks a variable's name after creation, and secret values can't be read b
 - Nightly at 2:41am PT (`/api/cron/themes`) plus "Refresh now". One snapshot for the whole team and one per team leader, stored in `themes`.
 - Numbers are computed, not written by the AI: per skill, each rep's average over the last 7 days of scored role plays and released coaching notes; "weak" = average under 3/5; share = weak reps ÷ reps with scores on that skill (min 2 reps). Ranked by share, then lowest average. Claude (Sonnet, `team_themes`) only writes the headline, why, meeting topic, 3-step drill and the line, and picks examples.
 - Spec asked for filters by track and date range; v1 filters by team leader only and always shows the last 7 days.
+
+## Content editor (Day 5)
+- Chase edits lessons, quizzes, homeowners, the rubric and each day's tasks at /content. Saving anything flips `is_draft_content` off and rebuilds the help bot's brain after the response.
+- Lesson video is a pasted link (YouTube, Vimeo, Loom, Google Drive, or a direct .mp4) in `lessons.video_url`. Mux upload stays for later; a link is what Chase can do from his phone today.
+- Quiz editor supports single and multiple choice only (no seeded short-answer questions).
+- Saved skills can't be deleted (old scores reference their slugs); rename instead. Tasks reps already did can't be deleted (that would wipe progress); mark optional instead.
+- "Add the next day" fills the last week to 7 days, then starts a new week titled "Week N".
