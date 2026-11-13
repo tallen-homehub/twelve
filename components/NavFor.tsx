@@ -10,6 +10,7 @@ export async function LeadNav({ role }: { role: Role }) {
       <BottomNav
         items={[
           { href: "/team", label: "My team", icon: <IconReps /> },
+          { href: "/team/themes", label: "Themes", icon: <IconThemes /> },
           { href: "/today", label: "Training", icon: <IconToday /> },
           { href: "/me", label: "Me", icon: <IconMe /> },
         ]}

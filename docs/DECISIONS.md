@@ -64,3 +64,8 @@ Vercel locks a variable's name after creation, and secret values can't be read b
 - **Weekly focus** (`weekly_focus`, week starts Monday Pacific) is set by staff or the rep's own leader; "✦ Suggest" drafts one with Haiku (`focus_suggest`). Reps see it on Today.
 - **Needs-you rules:** red flag this week, no activity 3+ days, failed assessment, practice avg down 10+, no focus, not coached 7+ days, didn't log yesterday.
 - Metrics are computed per request from the caller's RLS view (fine for ~250 reps). Move to a nightly rollup if it gets slow.
+
+## Team themes (2026-11-12)
+- Nightly at 2:41am PT (`/api/cron/themes`) plus "Refresh now". One snapshot for the whole team and one per team leader, stored in `themes`.
+- Numbers are computed, not written by the AI: per skill, each rep's average over the last 7 days of scored role plays and released coaching notes; "weak" = average under 3/5; share = weak reps ÷ reps with scores on that skill (min 2 reps). Ranked by share, then lowest average. Claude (Sonnet, `team_themes`) only writes the headline, why, meeting topic, 3-step drill and the line, and picks examples.
+- Spec asked for filters by track and date range; v1 filters by team leader only and always shows the last 7 days.

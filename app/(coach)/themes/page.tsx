@@ -1,14 +1,12 @@
 import { requireProfile } from "@/lib/auth";
-import { ComingSoon, PageHeader } from "@/components/ui";
+import { ThemesView } from "@/components/themes/ThemesView";
 
 export const metadata = { title: "Team themes" };
+// "Refresh now" reads the week with Claude; give it time.
+export const maxDuration = 120;
 
-export default async function ThemesPage() {
+export default async function ThemesPage({ searchParams }: { searchParams: Promise<{ leader?: string }> }) {
   await requireProfile({ roles: ["coach", "admin"] });
-  return (
-    <>
-      <PageHeader eyebrow="Team themes" title="what to train next." />
-      <ComingSoon day="Sunday" what="The top three skills the team is missing this week, with example clips." />
-    </>
-  );
+  const { leader } = await searchParams;
+  return <ThemesView leaderId={leader ?? null} staff repHref={(id) => `/reps/${id}`} />;
 }
